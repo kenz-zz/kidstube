@@ -3,73 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TikTok Kids Web</title>
+    <title>TikTok Kids Clone</title>
     <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            overflow: hidden;
-            background-color: black;
-            font-family: sans-serif;
-        }
+        body, html { margin: 0; padding: 0; height: 100%; background: #000; font-family: sans-serif; overflow: hidden; }
+        
+        #app { height: 100vh; overflow-y: scroll; scroll-snap-type: y mandatory; scrollbar-width: none; }
+        #app::-webkit-scrollbar { display: none; }
 
-        /* Container utama dengan efek snap */
-        .container {
-            height: 100vh;
-            overflow-y: scroll;
-            scroll-snap-type: y mandatory;
-            scrollbar-width: none; /* Sembunyikan scrollbar */
-        }
-        .container::-webkit-scrollbar { display: none; }
+        .video-card { height: 100vh; scroll-snap-align: start; position: relative; display: flex; align-items: center; justify-content: center; background: #000; }
+        
+        iframe { width: 100%; height: 100%; pointer-events: none; } /* Pointer events none agar tap masuk ke overlay */
+        
+        /* Overlay UI */
+        .ui-layer { position: absolute; bottom: 60px; left: 15px; color: #fff; z-index: 10; pointer-events: none; }
+        .username { font-weight: bold; margin-bottom: 5px; }
+        .title { font-size: 14px; opacity: 0.9; }
 
-        /* Tiap video 1 layar penuh */
-        .video-wrapper {
-            height: 100vh;
-            scroll-snap-align: start;
-            position: relative;
-            background: black;
-        }
-
-        iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-
-        /* Overlay UI sederhana */
-        .ui {
-            position: absolute;
-            bottom: 50px;
-            left: 20px;
-            color: white;
-            z-index: 10;
-        }
+        /* Hati Double Tap */
+        .heart { position: absolute; font-size: 80px; opacity: 0; transition: transform 0.3s, opacity 0.3s; z-index: 20; }
+        .heart.animate { opacity: 1; transform: scale(1.5); }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <!-- Tambahkan video di sini -->
-        
-        <!-- Video 1 -->
-        <div class="video-wrapper">
-            <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ?controls=1&mute=0" allowfullscreen></iframe>
-            <div class="ui"><h3>Video Edukasi 1</h3></div>
-        </div>
+    <div id="app"></div>
 
-        <!-- Video 2 -->
-        <div class="video-wrapper">
-            <iframe src="https://www.youtube.com/embed/L_LUpnjgPso?controls=1&mute=0" allowfullscreen></iframe>
-            <div class="ui"><h3>Video Edukasi 2</h3></div>
-        </div>
+    <script>
+        // 1. DATA VIDEO (Tambahkan sebanyak mungkin di sini untuk "Unlimited FYP")
+        const videos = [
+            { id: 'dQw4w9WgXcQ', user: '@EdukasiSeru', title: 'Belajar Sains dengan Cepat' },
+            { id: 'L_LUpnjgPso', user: '@AnakKreatif', title: 'Tutorial Menggambar Mudah' },
+            { id: 'tgbNymZ7vqY', user: '@DuniaBinatang', title: 'Hewan Lucu di Hutan' }
+        ];
 
-        <!-- Video 3 -->
-        <div class="video-wrapper">
-            <iframe src="https://www.youtube.com/embed/tgbNymZ7vqY?controls=1&mute=0" allowfullscreen></iframe>
-            <div class="ui"><h3>Video Edukasi 3</h3></div>
-        </div>
-    </div>
+        const app = document.getElementById('app');
 
+        // 2. Render Video ke Layar
+        videos.forEach(v => {
+            const card = document.createElement('div');
+            card.className = 'video-card';
+            card.innerHTML = `
+                <iframe src="https://www.youtube.com/embed/${v.id}?controls=0&autoplay=0&modestbranding=1&rel=0&playsinline=1" frameborder="0"></iframe>
+                <div class="ui-layer">
+                    <div class="username">${v.user}</div>
+                    <div class="title">${v.title}</div>
+                </div>
+                <div class="heart">❤️</div>
+            `;
+            
+            // 3. Logic Double Tap
+            let lastTap = 0;
+            card.addEventListener('touchend', (e) => {
+                const currentTime = new Date().getTime();
+                const tapLength = currentTime - lastTap;
+                if (tapLength < 500 && tapLength > 0) {
+                    const heart = card.querySelector('.heart');
+                    heart.classList.add('animate');
+                    setTimeout(() => heart.classList.remove('animate'), 500);
+                }
+                lastTap = currentTime;
+            });
+
+            app.appendChild(card);
+        });
+    </script>
 </body>
 </html>
