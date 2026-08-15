@@ -2,70 +2,560 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TikTok Kids Clone</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KenzzRobux - TopUp Robux Murah & Cepat</title>
+    <!-- Font Kartun dari Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body, html { margin: 0; padding: 0; height: 100%; background: #000; font-family: sans-serif; overflow: hidden; }
-        
-        #app { height: 100vh; overflow-y: scroll; scroll-snap-type: y mandatory; scrollbar-width: none; }
-        #app::-webkit-scrollbar { display: none; }
+        /* === PENGATURAN CSS (TEMA KARTUN BIRU SOFT) === */
+        :root {
+            --bg-color: #e0f2fe; /* Biru sangat soft */
+            --card-bg: #ffffff;
+            --primary-color: #38bdf8; /* Biru cerah */
+            --primary-hover: #0ea5e9;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #bae6fd;
+            --success-color: #4ade80;
+            --warning-color: #fbbf24;
+        }
 
-        .video-card { height: 100vh; scroll-snap-align: start; position: relative; display: flex; align-items: center; justify-content: center; background: #000; }
-        
-        iframe { width: 100%; height: 100%; pointer-events: none; } /* Pointer events none agar tap masuk ke overlay */
-        
-        /* Overlay UI */
-        .ui-layer { position: absolute; bottom: 60px; left: 15px; color: #fff; z-index: 10; pointer-events: none; }
-        .username { font-weight: bold; margin-bottom: 5px; }
-        .title { font-size: 14px; opacity: 0.9; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Fredoka', sans-serif;
+        }
 
-        /* Hati Double Tap */
-        .heart { position: absolute; font-size: 80px; opacity: 0; transition: transform 0.3s, opacity 0.3s; z-index: 20; }
-        .heart.animate { opacity: 1; transform: scale(1.5); }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 20px;
+            background-image: radial-gradient(#bae6fd 20%, transparent 20%), radial-gradient(#bae6fd 20%, transparent 20%);
+            background-position: 0 0, 25px 25px;
+            background-size: 50px 50px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            color: var(--primary-hover);
+            text-shadow: 2px 2px 0px #fff, -2px -2px 0px #fff, 2px -2px 0px #fff, -2px 2px 0px #fff;
+            letter-spacing: 1px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 24px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 25px rgba(56, 189, 248, 0.2);
+            border: 4px solid var(--border-color);
+            transition: transform 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--primary-hover);
+            font-size: 1.1rem;
+        }
+
+        input[type="text"], 
+        input[type="number"] {
+            width: 100%;
+            padding: 14px 18px;
+            border-radius: 16px;
+            border: 3px solid var(--border-color);
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+            background-color: #f8fafc;
+        }
+
+        input[type="text"]:focus, 
+        input[type="number"]:focus {
+            border-color: var(--primary-color);
+            background-color: #fff;
+        }
+
+        /* Profil Roblox (Simulasi) */
+        #profile-preview {
+            display: none;
+            align-items: center;
+            gap: 15px;
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #f0f9ff;
+            border-radius: 16px;
+            border: 2px dashed var(--primary-color);
+        }
+
+        #profile-img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #ccc;
+            border: 2px solid var(--primary-color);
+        }
+
+        .profile-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .display-name {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .username-tag {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Metode Pengiriman */
+        .methods-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .method-card {
+            border: 3px solid var(--border-color);
+            border-radius: 16px;
+            padding: 15px 10px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            background-color: #f8fafc;
+        }
+
+        .method-card.active {
+            border-color: var(--primary-color);
+            background-color: var(--primary-color);
+            color: white;
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(56, 189, 248, 0.4);
+        }
+
+        .note-box {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #fffbeb;
+            border: 2px solid var(--warning-color);
+            border-radius: 12px;
+            font-size: 0.9rem;
+            display: none;
+            color: #b45309;
+        }
+
+        /* Total Harga & Tombol */
+        .total-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-align: center;
+            color: var(--primary-hover);
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f0f9ff;
+            border-radius: 16px;
+            border: 2px solid var(--border-color);
+        }
+
+        button {
+            width: 100%;
+            padding: 18px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 6px 0 var(--primary-hover);
+            transition: all 0.1s;
+        }
+
+        button:active {
+            transform: translateY(6px);
+            box-shadow: none;
+        }
+
+        /* Modal / Popup */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 24px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            border: 4px solid var(--primary-color);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .modal-content h2 {
+            margin-bottom: 15px;
+            color: var(--primary-hover);
+        }
+
+        .order-code {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--success-color);
+            letter-spacing: 2px;
+            margin: 15px 0;
+            padding: 10px;
+            background: #f0fdf4;
+            border-radius: 12px;
+            border: 2px dashed var(--success-color);
+        }
+
+        /* Cek Pesanan */
+        .check-order-section {
+            margin-top: 40px;
+            border-top: 4px dashed var(--border-color);
+            padding-top: 30px;
+        }
+
+        #order-result {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8fafc;
+            border: 2px solid var(--border-color);
+            border-radius: 16px;
+            text-align: left;
+        }
+
+        #order-result p { margin-bottom: 5px; }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            background-color: var(--warning-color);
+            color: #fff;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .methods-grid {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
 
-    <div id="app"></div>
+<div class="container">
+    <div class="header">
+        <h1>KenzzRobux 🚀</h1>
+        <p>TopUp Robux Aman, Cepat, dan Terpercaya</p>
+    </div>
 
-    <script>
-        // 1. DATA VIDEO (Tambahkan sebanyak mungkin di sini untuk "Unlimited FYP")
-        const videos = [
-            { id: 'dQw4w9WgXcQ', user: '@EdukasiSeru', title: 'Belajar Sains dengan Cepat' },
-            { id: 'L_LUpnjgPso', user: '@AnakKreatif', title: 'Tutorial Menggambar Mudah' },
-            { id: 'tgbNymZ7vqY', user: '@DuniaBinatang', title: 'Hewan Lucu di Hutan' }
-        ];
-
-        const app = document.getElementById('app');
-
-        // 2. Render Video ke Layar
-        videos.forEach(v => {
-            const card = document.createElement('div');
-            card.className = 'video-card';
-            card.innerHTML = `
-                <iframe src="https://www.youtube.com/embed/${v.id}?controls=0&autoplay=0&modestbranding=1&rel=0&playsinline=1" frameborder="0"></iframe>
-                <div class="ui-layer">
-                    <div class="username">${v.user}</div>
-                    <div class="title">${v.title}</div>
-                </div>
-                <div class="heart">❤️</div>
-            `;
+    <!-- FORM PEMBELIAN -->
+    <div class="card">
+        <!-- 1. Username Roblox -->
+        <div class="form-group">
+            <label for="robloxUser">Username Roblox</label>
+            <input type="text" id="robloxUser" placeholder="Masukkan Username Roblox..." onblur="checkUsername()">
             
-            // 3. Logic Double Tap
-            let lastTap = 0;
-            card.addEventListener('touchend', (e) => {
-                const currentTime = new Date().getTime();
-                const tapLength = currentTime - lastTap;
-                if (tapLength < 500 && tapLength > 0) {
-                    const heart = card.querySelector('.heart');
-                    heart.classList.add('animate');
-                    setTimeout(() => heart.classList.remove('animate'), 500);
-                }
-                lastTap = currentTime;
-            });
+            <div id="profile-preview">
+                <img id="profile-img" src="https://tr.rbxcdn.com/38c6edcb50633730ff4cf39ac8859840/150/150/AvatarHeadshot/Png" alt="Avatar">
+                <div class="profile-info">
+                    <span class="display-name" id="display-name">Menunggu...</span>
+                    <span class="username-tag" id="username-tag">@username</span>
+                </div>
+            </div>
+        </div>
 
-            app.appendChild(card);
-        });
-    </script>
+        <!-- 2. Jumlah Robux -->
+        <div class="form-group">
+            <label for="robuxAmount">Jumlah Robux (Maks: 10.000)</label>
+            <input type="number" id="robuxAmount" placeholder="Contoh: 100" min="1" max="10000" oninput="calculateTotal()">
+        </div>
+
+        <!-- 3. Metode Pengiriman -->
+        <div class="form-group">
+            <label>Metode Pengiriman</label>
+            <div class="methods-grid">
+                <div class="method-card active" onclick="selectMethod('gamepass')">Gamepass</div>
+                <div class="method-card" onclick="selectMethod('komunitas')">Komunitas</div>
+                <div class="method-card" onclick="selectMethod('gift')">Gift Robux</div>
+            </div>
+            
+            <div id="method-note" class="note-box" style="display: block;">
+                Buat Gamepass di game kalian dengan harga <strong id="gamepass-price">0</strong> Robux (agar yang diterima sesuai dengan yang dibeli).
+            </div>
+        </div>
+
+        <!-- 4. Kontak -->
+        <div class="form-group">
+            <label for="contactInfo">Kontak (No. WA / Telegram / Email)</label>
+            <input type="text" id="contactInfo" placeholder="Untuk info status pesanan...">
+        </div>
+
+        <!-- 5. Total Harga & Bayar -->
+        <div class="total-price" id="total-price-display">
+            Total: Rp 0
+        </div>
+
+        <button onclick="processPayment()">Bayar Sekarang 💸</button>
+    </div>
+
+    <!-- CEK PESANAN -->
+    <div class="card check-order-section">
+        <h2 style="text-align: center; color: var(--primary-hover); margin-bottom: 15px;">Cari Pesanan Saya</h2>
+        <div class="form-group">
+            <input type="text" id="searchOrderCode" placeholder="Masukkan Kode Pesanan (Contoh: KZ-1234)">
+        </div>
+        <button onclick="checkOrder()" style="background-color: var(--text-muted); box-shadow: 0 6px 0 #475569;">Cek Status Pesanan</button>
+
+        <div id="order-result">
+            <!-- Hasil pencarian akan muncul di sini -->
+        </div>
+    </div>
+</div>
+
+<!-- MODAL PEMBAYARAN SUKSES -->
+<div class="modal" id="paymentModal">
+    <div class="modal-content">
+        <h2>Pesanan Berhasil Dibuat! 🎉</h2>
+        <p>Silakan selesaikan pembayaran ke admin. Simpan kode pesanan ini untuk mengecek status:</p>
+        <div class="order-code" id="modal-order-code">KZ-XXXX</div>
+        <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 15px;">(Screenshot halaman ini agar tidak lupa!)</p>
+        <button onclick="closeModal()">Tutup</button>
+    </div>
+</div>
+
+<script>
+    /* === PENGATURAN VARIABEL UTAMA === */
+    const MAX_ROBUX = 10000;
+    const HARGA_PER_100_R = 13000; // 100 Robux = Rp 13.000
+    const NAMA_KOMUNITAS = "Kenzz Group Official";
+    
+    // Ganti URL ini dengan URL Webhook Discord milikmu
+    const DISCORD_WEBHOOK_URL = "MASUKKAN_URL_WEBHOOK_DISCORD_DISINI"; 
+
+    let currentMethod = 'gamepass';
+    let globalTotalPrice = 0;
+    let globalGamepassPrice = 0;
+
+    // 1. Simulasi Cek Username Roblox
+    function checkUsername() {
+        const username = document.getElementById('robloxUser').value.trim();
+        const preview = document.getElementById('profile-preview');
+        const displayNameElement = document.getElementById('display-name');
+        const usernameTagElement = document.getElementById('username-tag');
+
+        if (username.length > 2) {
+            preview.style.display = 'flex';
+            displayNameElement.innerText = "Mencari...";
+            usernameTagElement.innerText = "";
+            
+            // Karena API asli Roblox di-block oleh CORS, kita buat simulasi visual
+            // Dalam dunia nyata, kamu butuh backend untuk melakukan fetch ke API Roblox
+            setTimeout(() => {
+                displayNameElement.innerText = username + " (Verified)";
+                usernameTagElement.innerText = "@" + username;
+            }, 800);
+        } else {
+            preview.style.display = 'none';
+        }
+    }
+
+    // 2. Kalkulasi Robux & Harga
+    function calculateTotal() {
+        let inputEl = document.getElementById('robuxAmount');
+        let amount = parseInt(inputEl.value);
+
+        // Paksa batas maksimal jika melebihi
+        if (amount > MAX_ROBUX) {
+            amount = MAX_ROBUX;
+            inputEl.value = amount;
+            alert(`Maksimal pesanan adalah ${MAX_ROBUX} Robux!`);
+        }
+
+        if (isNaN(amount) || amount < 1) {
+            document.getElementById('total-price-display').innerText = "Total: Rp 0";
+            document.getElementById('gamepass-price').innerText = "0";
+            return;
+        }
+
+        // Hitung harga Rupiah
+        globalTotalPrice = (amount / 100) * HARGA_PER_100_R;
+        
+        // Hitung harga Gamepass (Roblox memotong 30%, jadi kita bagi 0.7)
+        globalGamepassPrice = Math.ceil(amount / 0.7);
+
+        // Update UI
+        document.getElementById('total-price-display').innerText = `Total: Rp ${globalTotalPrice.toLocaleString('id-ID')}`;
+        document.getElementById('gamepass-price').innerText = globalGamepassPrice.toLocaleString('id-ID');
+    }
+
+    // 3. Pilihan Metode Pengiriman
+    function selectMethod(method) {
+        currentMethod = method;
+        
+        // Ubah styling tombol
+        const cards = document.querySelectorAll('.method-card');
+        cards.forEach(card => card.classList.remove('active'));
+        event.target.classList.add('active');
+
+        // Update Note
+        const noteBox = document.getElementById('method-note');
+        noteBox.style.display = 'block';
+
+        if (method === 'gamepass') {
+            noteBox.innerHTML = `Buat Gamepass di game kalian dengan harga <strong id="gamepass-price">${globalGamepassPrice.toLocaleString('id-ID')}</strong> Robux (agar yang diterima sesuai dengan yang dibeli).`;
+        } else if (method === 'komunitas') {
+            noteBox.innerHTML = `Pastikan kalian sudah join grup <strong>${NAMA_KOMUNITAS}</strong> selama minimal 15 hari!`;
+        } else if (method === 'gift') {
+            noteBox.innerHTML = `Pastikan akun Roblox kalian berumur <strong>16+ (16 Tahun ke atas)</strong> untuk menerima Gift Robux.`;
+        }
+    }
+
+    // 4. Proses Pembayaran & Kirim ke Discord
+    function processPayment() {
+        const username = document.getElementById('robloxUser').value.trim();
+        const amount = document.getElementById('robuxAmount').value;
+        const contact = document.getElementById('contactInfo').value.trim();
+
+        if (!username || !amount || !contact) {
+            alert("Harap isi Username, Jumlah Robux, dan Kontak terlebih dahulu!");
+            return;
+        }
+
+        // Generate Kode Pesanan Unik (Format: KZ-XXXXXX)
+        const orderCode = "KZ-" + Math.floor(100000 + Math.random() * 900000);
+        
+        // Data Pesanan
+        const orderData = {
+            id: orderCode,
+            username: username,
+            robux: amount,
+            method: currentMethod.toUpperCase(),
+            price: globalTotalPrice,
+            contact: contact,
+            status: "BELUM DIBAYAR"
+        };
+
+        // Simpan ke Local Storage (Sebagai simulasi Database)
+        let orders = JSON.parse(localStorage.getItem('kenzz_orders')) || {};
+        orders[orderCode] = orderData;
+        localStorage.setItem('kenzz_orders', JSON.stringify(orders));
+
+        // Kirim ke Discord Webhook
+        sendToDiscord(orderData);
+
+        // Tampilkan Modal Sukses
+        document.getElementById('modal-order-code').innerText = orderCode;
+        document.getElementById('paymentModal').style.display = 'flex';
+    }
+
+    function sendToDiscord(data) {
+        // Jika URL Webhook belum diganti, fungsi akan dibatalkan agar tidak error
+        if (DISCORD_WEBHOOK_URL === "MASUKKAN_URL_WEBHOOK_DISCORD_DISINI") {
+            console.log("Discord Webhook belum di-setting.");
+            return; 
+        }
+
+        const payload = {
+            username: "KenzzRobux Bot",
+            avatar_url: "https://tr.rbxcdn.com/38c6edcb50633730ff4cf39ac8859840/150/150/AvatarHeadshot/Png",
+            embeds: [{
+                title: "🔔 PESANAN ROBUX BARU!",
+                color: 3718648, // Warna Biru Soft
+                fields: [
+                    { name: "Kode Pesanan", value: `\`${data.id}\``, inline: true },
+                    { name: "Username Roblox", value: data.username, inline: true },
+                    { name: "Jumlah Robux", value: `${data.robux} R$`, inline: true },
+                    { name: "Metode", value: data.method, inline: true },
+                    { name: "Total Harga", value: `Rp ${data.price.toLocaleString('id-ID')}`, inline: true },
+                    { name: "Kontak", value: data.contact, inline: false }
+                ],
+                footer: { text: "KenzzRobux - Automasi Pesanan" },
+                timestamp: new Date().toISOString()
+            }]
+        };
+
+        fetch(DISCORD_WEBHOOK_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        }).catch(err => console.error("Gagal mengirim ke Discord:", err));
+    }
+
+    // 5. Fitur Cek Pesanan
+    function checkOrder() {
+        const searchInput = document.getElementById('searchOrderCode').value.trim().toUpperCase();
+        const resultBox = document.getElementById('order-result');
+        
+        if (!searchInput) {
+            alert("Masukkan kode pesanan terlebih dahulu!");
+            return;
+        }
+
+        const orders = JSON.parse(localStorage.getItem('kenzz_orders')) || {};
+        const foundOrder = orders[searchInput];
+
+        if (foundOrder) {
+            resultBox.style.display = 'block';
+            resultBox.style.borderColor = "var(--success-color)";
+            resultBox.innerHTML = `
+                <h3 style="margin-bottom:10px; color:var(--text-main);">Detail Pesanan: ${foundOrder.id}</h3>
+                <p><strong>Username:</strong> @${foundOrder.username}</p>
+                <p><strong>Robux:</strong> ${foundOrder.robux} R$</p>
+                <p><strong>Metode:</strong> ${foundOrder.method}</p>
+                <p><strong>Total Harga:</strong> Rp ${foundOrder.price.toLocaleString('id-ID')}</p>
+                <p><strong>Status:</strong> <span class="status-badge">${foundOrder.status}</span></p>
+            `;
+        } else {
+            resultBox.style.display = 'block';
+            resultBox.style.borderColor = "var(--warning-color)";
+            resultBox.innerHTML = `<p style="color:#b45309; font-weight:bold; text-align:center;">Kode pesanan tidak ditemukan!</p>`;
+        }
+    }
+
+    function closeModal() {
+        document.getElementById('paymentModal').style.display = 'none';
+        // Reset form jika diinginkan
+        document.getElementById('robuxAmount').value = '';
+        calculateTotal();
+    }
+</script>
+
 </body>
 </html>
