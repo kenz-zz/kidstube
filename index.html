@@ -303,7 +303,7 @@
 
         <!-- 2. Jumlah Robux -->
         <div class="form-group">
-            <label for="robuxAmount">Jumlah Robux (Maks: 10.000)</label>
+            <label for="robuxAmount">Jumlah Robux</label>
             <input type="number" id="robuxAmount" placeholder="Contoh: 100" min="1" max="10000" oninput="calculateTotal()">
         </div>
 
@@ -332,7 +332,7 @@
             Total: Rp 0
         </div>
 
-        <button onclick="processPayment()">Bayar Sekarang 💸</button>
+        <button onclick="processPayment()">Bayar Sekarang</button>
     </div>
 
     <!-- CEK PESANAN -->
@@ -364,10 +364,10 @@
     /* === PENGATURAN VARIABEL UTAMA === */
     const MAX_ROBUX = 10000;
     const HARGA_PER_100_R = 13000; // 100 Robux = Rp 13.000
-    const NAMA_KOMUNITAS = "Kenzz Group Official";
+    const NAMA_KOMUNITAS = "Kenzz Studio";
     
     // Ganti URL ini dengan URL Webhook Discord milikmu
-    const DISCORD_WEBHOOK_URL = "MASUKKAN_URL_WEBHOOK_DISCORD_DISINI"; 
+    const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1538156965279047761/H-kxur3nmItJIZYwvVMisRE1vUqN4Q9EX1O-nRUqjylqcgWtfAQ0QF5iraDPjg72pe02"; 
 
     let currentMethod = 'gamepass';
     let globalTotalPrice = 0;
